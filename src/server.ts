@@ -8,11 +8,14 @@ import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+export function app(): express.Express {
+  
+
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
-const app = express();
-const angularApp = new AngularNodeAppEngine();
+const server = express();
+const angularserver = new AngularNodeAppEngine();
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -20,7 +23,7 @@ const angularApp = new AngularNodeAppEngine();
  *
  * Example:
  * ```ts
- * app.get('/api/**', (req, res) => {
+ * server.get('/api/**', (req, res) => {
  *   // Handle API request
  * });
  * ```
@@ -29,7 +32,7 @@ const angularApp = new AngularNodeAppEngine();
 /**
  * Serve static files from /browser
  */
-app.use(
+server.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
@@ -38,10 +41,10 @@ app.use(
 );
 
 /**
- * Handle all other requests by rendering the Angular application.
+ * Handle all other requests by rendering the Angular serverlication.
  */
-app.use('/**', (req, res, next) => {
-  angularApp
+server.use('/**', (req, res, next) => {
+  angularserver
     .handle(req)
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
@@ -55,12 +58,15 @@ app.use('/**', (req, res, next) => {
  */
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
 
+return server;
+}
 /**
  * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
  */
-export const reqHandler = createNodeRequestHandler(app);
+
+export * from './main.server';

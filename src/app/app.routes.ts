@@ -13,11 +13,3 @@ export const routes: Routes = [
     { path: '**', redirectTo: '' }
 ];
 
-function getPrerenderParams() {
-    return [
-      { id: '1' },
-      { id: '2' },
-      { id: '3' },
-      // Add more IDs as needed
-    ];
-  }
